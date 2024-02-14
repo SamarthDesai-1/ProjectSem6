@@ -1,0 +1,19 @@
+{
+  "name": "bas",
+  "version": "1.0.0",
+  "description": "This application is develop for providing financial services.",
+  "main": "server.js",
+  "scripts": {
+    "test": "nodemon server.js"
+  },
+  "type": "commonjs",
+  "author": "Samarth Desai",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
