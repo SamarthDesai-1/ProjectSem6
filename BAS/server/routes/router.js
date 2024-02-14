@@ -7,10 +7,11 @@ const route = express.Router();
 
 route.post("/api/users/signup", [
 
-  expressValidator.query("Fname").isLength({ min: 1, max: 20 }).matches(expressionName),
-  expressValidator.query("Lname").isLength({ min: 1, max: 20 }).matches(expressionName),
+  expressValidator.query("fname").notEmpty().matches(expressionName).isLength({ max: 10 }),
+  expressValidator.query("lname").notEmpty().matches(expressionName).isLength({ max: 10 }),
   expressValidator.query("email").isString().notEmpty().matches(expressionEmail),
-  expressValidator.query("password").isString().notEmpty().matches(expressionPassword)
+  expressValidator.query("password").isString().notEmpty().matches(expressionPassword),
+  expressValidator.query("cpassword").isString().notEmpty().matches(expressionPassword),
 
 ], (request, response, next) => {
   const {
@@ -23,33 +24,37 @@ route.post("/api/users/signup", [
   if (result.errors.length == 0) {
     console.log("Success");
 
+    if (request.query.password !== request.query.cpassword) {
+      return response.status(404).send({ msg: "Retype password not match with confirm password" });
+    }
+
     request.validData = {
-      Fname: request.query.Fname,
-      Lname: request.query.Lname,
+      fname: request.query.fname,
+      lname: request.query.lname,
       email: request.query.email,
-      password: request.query.password
+      password: request.query.password,
     };
-    response.status(200).send({ msg: "Valid data" });
+    console.log(`Valid data`);
     next();
   }
   else if (result.errors.length >= 4) {
-    response.status(404).send({ msg: "First fill the form for signup" });
+    return response.status(404).send({ msg: "First fill the form for signup" });
   }
   else {
-    if (result.errors[0].path == "Fname") {
-      response.status(404).send({ msg: "Please enter valid first name" });
+    if (result.errors[0].path == "fname") {
+      return response.status(404).send({ msg: "Please enter valid first name" });
     }
-    else if (result.errors[0].path == "Lname") {
-      response.status(404).send({ msg: "Please enter valid last name" });
+    else if (result.errors[0].path == "lname") {
+      return response.status(404).send({ msg: "Please enter valid last name" });
     }
     else if (result.errors[0].path == "email") {
-      response.status(404).send({ msg: "Please enter valid email" });
+      return response.status(404).send({ msg: "Please enter valid email" });
     }
-    else if (result.errors[0].path == "password") {
-      response.status(404).send({ msg: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character" });
+    else if (result.errors[0].path == "password" || result.errors[0].path == "cpassword") {
+      return response.status(404).send({ msg: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character" });
     }
   }
-  next();
-}, controller.greet);
+  
+}, controller.insert);
 
 module.exports = route;
