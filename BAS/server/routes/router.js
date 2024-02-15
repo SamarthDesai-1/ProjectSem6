@@ -1,5 +1,5 @@
 const express = require("express");
-const controller = require("../controller/controller");
+const controller = require("../controller/SignupConfigs");
 const expressValidator = require("express-validator");
 const { expressionName, expressionEmail, expressionPassword } = require('../validation/SignupExpressions');
 const route = express.Router();
@@ -7,16 +7,13 @@ const route = express.Router();
 
 route.post("/api/users/signup", [
 
-  expressValidator.query("fname").notEmpty().matches(expressionName).isLength({ max: 10 }),
-  expressValidator.query("lname").notEmpty().matches(expressionName).isLength({ max: 10 }),
-  expressValidator.query("email").isString().notEmpty().matches(expressionEmail),
-  expressValidator.query("password").isString().notEmpty().matches(expressionPassword),
-  expressValidator.query("cpassword").isString().notEmpty().matches(expressionPassword),
+  expressValidator.body("fname").notEmpty().matches(expressionName).isLength({ max: 20 }),
+  expressValidator.body("lname").notEmpty().matches(expressionName).isLength({ max: 20 }),
+  expressValidator.body("email").isString().notEmpty().matches(expressionEmail),
+  expressValidator.body("password").isString().notEmpty().matches(expressionPassword),
+  expressValidator.body("cpassword").isString().notEmpty().matches(expressionPassword),
 
 ], (request, response, next) => {
-  const {
-    query: { filter, value }
-  } = request;
 
   const result = expressValidator.validationResult(request);
   console.log(result);
@@ -24,16 +21,9 @@ route.post("/api/users/signup", [
   if (result.errors.length == 0) {
     console.log("Success");
 
-    if (request.query.password !== request.query.cpassword) {
+    if (request.body.password !== request.body.cpassword) {
       return response.status(404).send({ msg: "Retype password not match with confirm password" });
     }
-
-    request.validData = {
-      fname: request.query.fname,
-      lname: request.query.lname,
-      email: request.query.email,
-      password: request.query.password,
-    };
     console.log(`Valid data`);
     next();
   }
@@ -55,6 +45,8 @@ route.post("/api/users/signup", [
     }
   }
   
-}, controller.insert);
+}, controller.validateUser);
+
+route.post("/api/users/verify", controller.verifyOTP);
 
 module.exports = route;

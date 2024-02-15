@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./database/connection');
 const cors = require('cors');
+const mail = require("./services/SendMail");
 
 const app = express();
 const PORT = 5000;
