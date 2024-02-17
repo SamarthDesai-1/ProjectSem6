@@ -1,0 +1,77 @@
+JWT.verify(request.token, key, (error, data) => {
+
+    if (error) {
+      response.send({ msg: "Invalid Token" });
+    }
+    else {
+      
+      console.log("cookies : ", request.cookies);
+      console.log('Signed Cookies: ', request.signedCookies);
+
+      response.json({
+        msg: "Hello from profile using JWT token",
+        data: data,
+      });
+      
+    }
+  });
+
+  
+/* Middleware function */ function verify (request, response, next) {
+  const bearerHeader = request.headers["authentication"];
+
+  if (typeof bearerHeader !== "undefined") {
+    const bearer = bearerHeader.split(" ");
+    const token = bearer[1];
+
+    request.token = token;
+    next();
+  } 
+  else {
+    response.send({
+      result: "Token is not valid",
+    });
+  }
+}
+
+expiresIn for JWT : Math.floor(Date.now() / 1000) + (60 * 2 * 24)
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.forwardemail.net",
+    port: 465,
+    secure: true,
+    service: "gmail",
+    auth: {
+      user: "transactorgltd@gmail.com",
+      pass: "poum grxa duvv ienc"
+    }
+  });
+
+  const mailOptions = {
+    from: "transactorgltd@gmail.com",
+    to: "samarthdesain@gmail.com",
+    subject: "Hello from Transact LTD",
+    text: `Do not share this OTP to anyone : ${OTP}`
+  };
+
+  try {
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`Email send successfully`);
+    return response.status(200).send({ msg: `Email send successfully to your ${request.body.email}` });
+    
+  } catch (error) {
+    response.status(404).send({ msg: "Not able to send Email" });
+    return;
+  }
+
+   if (user) {
+      const randomString = randomstring.generate();
+      const data = await UserSignupSchema.updateOne({ Email: email }, { $set: { token: randomString } });
+      sendMail(user.Email, response, randomString);
+      response.status(200).send({ msg: "Please check your indox of mail and reset your password" });
+    }
+    else {
+      return response.status(200).send({ success: true, msg: `${error.message} this email not exists` });
+    }
+
+NmIjyx70uaVn5dLoaPx7vsvO54wzaMXF

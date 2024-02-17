@@ -19,6 +19,10 @@ let schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  Token: {
+    type: String,
+    default: ""
+  }
 });
 
 

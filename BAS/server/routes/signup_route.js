@@ -1,7 +1,7 @@
 const express = require("express");
-const controller = require("../controller/SignupConfigs");
+const controller = require("../controller/SignupControllers");
 const expressValidator = require("express-validator");
-const { expressionName, expressionEmail, expressionPassword } = require('../validation/SignupExpressions');
+const { expressionName, expressionEmail, expressionPassword } = require('../validation/RegularExpression');
 const route = express.Router();
 
 
@@ -47,6 +47,8 @@ route.post("/api/users/signup", [
   
 }, controller.validateUser);
 
-route.post("/api/users/verify", controller.verifyOTP);
+/* Verify signup data and insert in database */ route.post("/api/users/verify", controller.verifyOTP);
+
+
 
 module.exports = route;

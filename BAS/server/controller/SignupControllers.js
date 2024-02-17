@@ -1,7 +1,8 @@
 const UserSignupSchema = require("../model/SignupDB");
-const SendMail = require("../services/SendMail");
+const SendMail = require("../services/SendMailOTP");
 const nodemailer = require("nodemailer");
 const generateOTP = require("../OTP/GenerateOtp");
+const sendEmail = require("../services/SendMailOTP");
 
 const OBJ = {
   serverOTP: null,
@@ -27,33 +28,7 @@ exports.validateUser = async (request, response) => {
   OBJ.SignupData = request.body;
   OBJ.serverOTP = OTP;
   
-  const transporter = nodemailer.createTransport({
-    host: "smtp.forwardemail.net",
-    port: 465,
-    secure: true,
-    service: "gmail",
-    auth: {
-      user: "transactorgltd@gmail.com",
-      pass: "poum grxa duvv ienc"
-    }
-  });
-
-  const mailOptions = {
-    from: "transactorgltd@gmail.com",
-    to: "samarthdesain@gmail.com",
-    subject: "Hello from Transact LTD",
-    text: `Do not share this OTP to anyone : ${OTP}`
-  };
-
-  try {
-    const result = await transporter.sendMail(mailOptions);
-    console.log(`Email send successfully`);
-    return response.status(200).send({ msg: "Email send successfully to your email-ID" });
-    
-  } catch (error) {
-    response.status(404).send({ msg: "Not able to send Email" });
-    return;
-  }
+  sendEmail(request, response, OTP);
 
 };
 
