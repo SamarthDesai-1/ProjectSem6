@@ -2,16 +2,8 @@ const express = require("express");
 const expressValidator = require('express-validator');
 const { expressionEmail, expressionPassword } = require('../validation/RegularExpression');
 const controller = require("../controller/LoginControllers");
-const sendMailResetPassword = require('../services/SendMailResetPassword');
 
 const route = express.Router();
-
-
-/**
- * details -> email ,password = done
- * forget password
- * generate JWT token = done
- */
 
 route.post("/login", [
 
@@ -25,7 +17,6 @@ route.post("/login", [
   if (result.errors.length == 0) {
     
     next();
-
   }
   else if (result.errors.length >= 2) {
     return response.status(404).send({ msg: "First fill the form for signup" });

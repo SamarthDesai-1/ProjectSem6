@@ -27,7 +27,7 @@ exports.validateUser = (request, response) => {
 
         if (error) {
           console.log(error);
-          return;
+          return response.status(200).send({ msg: "error occured" ,error: error });
         }
 
         if (result) {
