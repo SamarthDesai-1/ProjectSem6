@@ -18,7 +18,7 @@ app.get("/", (request, response) => {
 
 /* Connect to MongoDB database */ connectDB();
 
-app.use("/test", require("./routes/signup_route"));
+app.use("/test/api/users", require("./routes/signup_route"));
 app.use("/test/api/users", require("./routes/login_route"));
 
 

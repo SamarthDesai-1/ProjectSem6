@@ -5,17 +5,16 @@ const controller = require("../controller/LoginControllers");
 
 const route = express.Router();
 
-route.post("/login", [
-
+const verifyArray = [
   expressValidator.body("email").isString().notEmpty().matches(expressionEmail),
   expressValidator.body("password").isString().notEmpty().matches(expressionPassword),
+];
 
-], (request, response, next) => {
+route.post("/login", verifyArray, (request, response, next) => {
 
   const result = expressValidator.validationResult(request);
 
   if (result.errors.length == 0) {
-    
     next();
   }
   else if (result.errors.length >= 2) {
@@ -29,12 +28,10 @@ route.post("/login", [
   }
 }, controller.validateUser);
 
+
 route.post("/profile", controller.verifyUser);
-
-
 route.post("/forget-password", controller.forgetPassword); 
 route.get("/reset-password", controller.resetPassword); 
-
 route.get("/testJwt", controller.verifyUser);
 
 

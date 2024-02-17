@@ -4,16 +4,15 @@ const expressValidator = require("express-validator");
 const { expressionName, expressionEmail, expressionPassword } = require('../validation/RegularExpression');
 const route = express.Router();
 
-
-route.post("/api/users/signup", [
-
+const verifyArray = [
   expressValidator.body("fname").notEmpty().matches(expressionName).isLength({ max: 20 }),
   expressValidator.body("lname").notEmpty().matches(expressionName).isLength({ max: 20 }),
   expressValidator.body("email").isString().notEmpty().matches(expressionEmail),
   expressValidator.body("password").isString().notEmpty().matches(expressionPassword),
   expressValidator.body("cpassword").isString().notEmpty().matches(expressionPassword),
+];
 
-], (request, response, next) => {
+route.post("/signup", verifyArray, (request, response, next) => {
 
   const result = expressValidator.validationResult(request);
   console.log(result);
@@ -47,7 +46,7 @@ route.post("/api/users/signup", [
   
 }, controller.validateUser);
 
-/* Verify signup data and insert in database */ route.post("/api/users/verify", controller.verifyOTP);
+/* Verify signup data and insert in database */ route.post("/verify", controller.verifyOTP);
 
 
 
