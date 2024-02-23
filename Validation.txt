@@ -1,0 +1,106 @@
+const express = require("express");
+const expressValidator = require('express-validator');
+const { expressionEmail, expressionPassword } = require('../validation/RegularExpression');
+const controller = require("../controller/LoginControllers");
+
+const route = express.Router();
+
+
+const verifyArray = [
+  expressValidator.body("email").isString().notEmpty().matches(expressionEmail).withMessage("Please enter a valid email"),
+  expressValidator.body("password").isString().notEmpty().matches(expressionPassword).withMessage("Password must be at least 8 characters long and contain at 	least one uppercase letter, one lowercase letter, one number, and one special character"),
+  expressValidator.body("cpassword").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Passwords do not match");
+    }
+    return true;
+  }),
+];
+
+route.post("/login", verifyArray, async (request, response, next) => {
+  const result = expressValidator.validationResult(request);
+  if (!result.isEmpty()) {
+    const errors = result.array();
+    const errorMsgs = errors.map(error => ({ field: error.param, message: error.msg }));
+    return response.status(400).json({ errors: errorMsgs });
+  }
+  next();
+}, controller.validateUser);
+
+module.exports = route;
+
+
+// signup new 
+
+const verifyArray = [
+  expressValidator.body("fname").notEmpty().matches(expressionName).withMessage("First name should contain only letters").isLength({ max: 20 }).withMessage("First name should not exceed 20 characters"),
+  expressValidator.body("lname").notEmpty().matches(expressionName).withMessage("Last name should contain only letters").isLength({ max: 20 }).withMessage("Last name should not exceed 20 characters"),
+  expressValidator.body("email").isString().notEmpty().matches(expressionEmail).withMessage("Please enter a valid email"),
+  expressValidator.body("password").isString().notEmpty().matches(expressionPassword).withMessage("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character"),
+  expressValidator.body("cpassword").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Passwords do not match");
+    }
+    return true;
+  }),
+];
+
+route.post("/signup", verifyArray, async (request, response, next) => {
+  const result = expressValidator.validationResult(request);
+  if (!result.isEmpty()) {
+    const errors = result.array();
+    const errorMsgs = errors.map(error => ({ field: error.param, message: error.msg }));
+    return response.status(400).json({ errors: errorMsgs });
+  }
+  next();
+}, controller.validateUser);
+
+module.exports = route;
+
+
+// signup old
+
+const verifyArray = [
+  expressValidator.body("fname").notEmpty().matches(expressionName).isLength({ max: 20 }),
+  expressValidator.body("lname").notEmpty().matches(expressionName).isLength({ max: 20 }),
+  expressValidator.body("email").isString().notEmpty().matches(expressionEmail),
+  expressValidator.body("password").isString().notEmpty().matches(expressionPassword),
+  expressValidator.body("cpassword").isString().notEmpty().matches(expressionPassword),
+];
+
+route.post("/signup", verifyArray, async (request, response, next) => {
+
+  const result = expressValidator.validationResult(request);
+  console.log(result);
+
+  if (result.errors.length == 0) {
+    console.log("Success");
+
+    // if (request.body.password !== request.body.cpassword) {
+    //   return response.status(404).send({ msg: "Retype password not match with confirm password" });
+    // }
+    console.log(`Valid data`);
+    next();
+  }
+  else if (result.errors.length >= 4) {
+    return response.status(404).send({ msg: "First fill the form for signup" });
+  }
+  else {
+    if (result.errors[0].path == "fname") {
+      return response.status(404).send({ msg: "First name should contains only letters" });
+    }
+    else if (result.errors[0].path == "lname") {
+      return response.status(404).send({ msg: "Last name should contains only letters" });
+    }
+    else if (result.errors[0].path == "email") {
+      return response.status(404).send({ msg: "Please enter valid email" });
+    }
+    else if (result.errors[0].path == "password") {
+      return response.status(404).send({ msg: "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character" });
+    }
+    else if (request.body.password !== request.body.cpassword) {
+      return response.status(404).send({ msg: "Retype password not match with confirm password" });
+    }
+  }
+  
+}, controller.validateUser);

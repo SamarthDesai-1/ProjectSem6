@@ -34,6 +34,8 @@ schema.pre('save', async function(next) {
   next();
 });
 
-const UserSignupSchema = mongoose.model("Signupuser", schema);
+const UserSignupSchema = mongoose.model("signupuser", schema);
 
 module.exports = UserSignupSchema;
+
+
